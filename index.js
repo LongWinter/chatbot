@@ -12,31 +12,31 @@ const app            = express();
 // const https = require('https');
 const request = require('request');
 const port = 1337;
-const path = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/d53441c9-5d6d-43d8-84ac-945549ae12d4?subscription-key=a71922e0a1f7439cb4c05612e074603c&timezoneOffset=-360&q=';
+/**
+ * this is the path for LUIS AI model!
+ * Dont forget your key here
+ * just replace ?????? with your API key 
+ */
+const path = 'https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/d53441c9-5d6d-43d8-84ac-945549ae12d4?subscription-key=??????????????????&timezoneOffset=-360&q=';
 
-
+/**
+ * Some predefined intents when you train you MLP model
+ */
 const ORDERFOOD = 'OrderFood';
 const QUERYONMENU = 'QueryOnMenu';
 const CONFIRMED = 'Utilities.Confirm';
 
 
 app.use(bodyParser.urlencoded({ extended: true }));
-//MongoClient.connect(db.url, (err, database) => {
-//  if (err) return console.log(err)
-//  require('./app/routes')(app, database);
-//  app.listen(port, () => {
-//    console.log('We are live on ' + port);
-//  });
-//})
+
 
 app.get('/', function (req, res) {
+    //retrieve the query from chatfuel API which forwards messenger message to this endpoint
     let query = req.query.query;
-    console.log("this is what i got " + query);
     let data = [];
     let array = [];
+    // the header of response sending to chatfuel API
     res.setHeader('Content-Type', 'application/json');
-
-    //  const propertiesObject = { q: userQuery.query};
     const propertiesObject = { q: query};
 
     request({url:path, qs:propertiesObject}, function(err, response, body) {
@@ -51,10 +51,13 @@ app.get('/', function (req, res) {
         let MongoClient = require('mongodb').MongoClient;
         const assert = require('assert');
 
-
-        let url = "mongodb+srv://strapi:Hyh83345511!@cluster0-tds3s.mongodb.net/test?retryWrites=true";
+        // this url is our remote mongodb address 
+        // again credentials are replaced with ******
+        // you can use whatever db you want
+        let url = "mongodb+srv://******************@******.mongodb.net/test?retryWrites=true";
 
         switch(intent){
+            // when user's intention is to order food
             case ORDERFOOD:
 
                 body.entities.map(element => {
@@ -81,8 +84,7 @@ app.get('/', function (req, res) {
                         {"text": message}
                     ];
                 });
-
-
+                // here insert user request for future possible usage
                 MongoClient.connect(url, function(err, db) {
                     if (err) throw err;
                     var dbo = db.db("mydb");
@@ -93,9 +95,11 @@ app.get('/', function (req, res) {
                         db.close();
                     });
                 });
+
                 res.send(JSON.stringify({ "messages":  data}));
 
                 break;
+            // when user's intention is to check menu
             case QUERYONMENU:
                 data = [
                     {
@@ -122,6 +126,7 @@ app.get('/', function (req, res) {
                 res.send(JSON.stringify({ "messages":  data,"redirect_to_blocks": array}));
 
                 break;
+            // when user want to confirm order
             case CONFIRMED:
 
                 var message = "Your order is processing, thank you for using!";
@@ -133,29 +138,16 @@ app.get('/', function (req, res) {
                     {"text": message}
                 ];
 
-//get only one query!!!!
+
                 // MongoClient.connect(url, function(err, db) {
                 //     if (err) throw err;
                 //     var dbo = db.db("mydb");
-                //     dbo.collection("orders").findOne().toArray(function(err, result) {
+                //     dbo.collection("orders").drop(function(err, delOK) {
                 //         if (err) throw err;
-                //         console.log(result.foodName);
-                //         //TODO pass to ording function!!!!
+                //         if (delOK) console.log("Collection deleted");
                 //         db.close();
                 //     });
                 // });
-
-//get drop DB !!!!!
-
-                MongoClient.connect(url, function(err, db) {
-                    if (err) throw err;
-                    var dbo = db.db("mydb");
-                    dbo.collection("orders").drop(function(err, delOK) {
-                        if (err) throw err;
-                        if (delOK) console.log("Collection deleted");
-                        db.close();
-                    });
-                });
 
                 res.send(JSON.stringify({ "messages":  data,"redirect_to_blocks": array }));
 
@@ -170,8 +162,6 @@ app.get('/', function (req, res) {
 
     });
 
-    // res.send('ready to rock and roll!' + );
-
 });
 
 
@@ -179,6 +169,13 @@ app.listen(port, () => {
     console.log('We are live on ' + port);
 });
 
+/**
+ * this is a function which simulating user clicks to order food on SKIP
+ * again, this is because SKIP didn't offer food ordering API even it is 2018 now!!!
+ * this is just for demoing purposes
+ * 
+ * @param {*} itemName is the item you want to order on SKIP
+ */
 
 function simulateOrder(itemName){
     (async () => {
@@ -193,8 +190,9 @@ function simulateOrder(itemName){
     
     
         await page.waitForSelector('.form-control');
-        await page.type('#email','murun.enkhee@gmail.com');
-        await page.type('#password','123456');
+        // this will be your own user name and password
+        await page.type('#email','********');
+        await page.type('#password','******');
         await page.click('#submit-btn');
     
         await page.waitForSelector('.styled-select-container');
