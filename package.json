@@ -1,0 +1,30 @@
+{
+  "name": "chatbot",
+  "version": "1.0.0",
+  "description": "a facebook chat bot that works with chatfuel and LUIS.ai",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "mongodb": "^3.1.10",
+    "puppeteer": "^1.11.0",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LongWinter/chatbot.git"
+  },
+  "keywords": [
+    "chatbot"
+  ],
+  "author": "Ye Yuan, Yihua Huang",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LongWinter/chatbot/issues"
+  },
+  "homepage": "https://github.com/LongWinter/chatbot#readme"
+}
