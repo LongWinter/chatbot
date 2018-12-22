@@ -16,3 +16,6 @@ Our NLP model takes user input, analyzes it, and send back user's intention alon
 This repository only contains our simple backend script and some of the ordering logic 
 
 Please feel free to contact us if you are interest!
+
+Demo Pictures:
+
